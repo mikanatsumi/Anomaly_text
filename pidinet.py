@@ -1,7 +1,4 @@
-"""
-Author: Zhuo Su, Wenzhe Liu
-Date: Feb 18, 2021
-"""
+
 
 import math
 import numpy as np
@@ -60,48 +57,9 @@ class CDCM(nn.Module):
         return x1 + x2 + x3 + x4
 
 
-class MapReduce(nn.Module):
-    """
-    Reduce feature maps into a single edge map
-    """
-    def __init__(self, channels):
-        super(MapReduce, self).__init__()
-        self.conv = nn.Conv2d(channels, 1, kernel_size=1, padding=0)
-        nn.init.constant_(self.conv.bias, 0)
-
-    def forward(self, x):
-        return self.conv(x)
-
-
-class PDCBlock(nn.Module):
-    def __init__(self, pdc, inplane, ouplane, stride=1):
-        super(PDCBlock, self).__init__()
-        self.stride=stride
-            
-        self.stride=stride
-        if self.stride > 1:
-            self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-            self.shortcut = nn.Conv2d(inplane, ouplane, kernel_size=1, padding=0)
-        self.conv1 = Conv2d(pdc, inplane, inplane, kernel_size=3, padding=1, groups=inplane, bias=False)
-        self.relu2 = nn.ReLU()
-        self.conv2 = nn.Conv2d(inplane, ouplane, kernel_size=1, padding=0, bias=False)
-
-    def forward(self, x):
-        if self.stride > 1:
-            x = self.pool(x)
-        y = self.conv1(x)
-        y = self.relu2(y)
-        y = self.conv2(y)
-        if self.stride > 1:
-            x = self.shortcut(x)
-        y = y + x
-        return y
 
 class PDCBlock_converted(nn.Module):
-    """
-    CPDC, APDC can be converted to vanilla 3x3 convolution
-    RPDC can be converted to vanilla 5x5 convolution
-    """
+   
     def __init__(self, pdc, inplane, ouplane, stride=1):
         super(PDCBlock_converted, self).__init__()
         self.stride=stride
